@@ -47,10 +47,27 @@ var myTransforms = {
 		new Transform(ceLookup, "http://ns.hearst.com/administrative/en/1.0/ Corporate_Entity"),
 		new Transform(originLookup, "http://ns.hearst.com/administrative/en/1.0/ Origin")],
 	"http://hearst.com/ns/legacy_m rowguid" : new Transform(keywords, "http://ns.hearst.com/descriptive/en/1.0/ Hearst_Keywords"),
-	"http://hearst.com/ns/legacy_m/picuse picnotes" : new Transform(assetUse, "http://ns.hearst.com/administrative/en/1.0/ Asset_Use"),
-	"http://hearst.com/ns/legacy_m/picuse page" : new Transform(pageRange, "http://ns.hearst.com/descriptive/en/1.0/ Page_Range"),
-	"http://hearst.com/ns/legacy_m/picuse section" : new Transform(section, "http://hearst.com/ns/legacy_m/picuse section"),
-	"http://hearst.com/ns/legacy_m/picuse zone" : [new Transform(zone, "http://ns.hearst.com/descriptive/en/1.0/ Cover_Display_Date"),
+	"http://hearst.com/ns/legacy_m/picuse picnotes" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Asset_Use"),
+	"http://hearst.com/ns/legacy_m/picuse page" : new Transform(oneToOne, "http://ns.hearst.com/descriptive/en/1.0/ Page_Range"),
+	// add -mike
+	"http://hearst.com/ns/legacy_m archiveddt" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Archived_Date"),
+	"http://hearst.com/ns/legacy_m cbyline280" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Byline"),	
+	"http://hearst.com/ns/legacy_m capt2120" : new Transform(oneToOne, "http://ns.hearst.com/descriptive/en/1.0/ Caption"),
+	"http://hearst.com/ns/legacy_m city290" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ City"),
+	"http://hearst.com/ns/legacy_m credit2110" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Contributor"),
+	"http://hearst.com/ns/legacy_m ctry2101" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Country"),
+	"http://hearst.com/ns/legacy_m/picuse printwhen" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Cover_Date"),
+	"http://hearst.com/ns/legacy_m datecr255" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Creation_Date"),
+	"http://hearst.com/ns/legacy_m cbyline280" : new Transform(oneToOne, "http://ns.hearst.com/descriptive/en/1.0/ Creator"),
+	"http://hearst.com/ns/legacy_m mhead2105" : new Transform(oneToOne, "http://ns.hearst.com/descriptive/en/1.0/ Headline"),
+	"http://hearst.com/ns/legacy_m ud_dt_1" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ On_Stand_Date"),
+	"http://hearst.com/ns/legacy_m ud_dt_1" : new Transform(noDate, "http://ns.hearst.com/administrative/en/1.0/ Off_Stand_Date"),
+	"http://hearst.com/ns/legacy_m pubdate" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Publication_Date"),
+	"http://hearst.com/ns/legacy_m section" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Status"),
+	"http://hearst.com/ns/legacy_m cstate" : new Transform(oneToOne, "http://ns.hearst.com/administrative/en/1.0/ Story_Name"),
+	"http://hearst.com/ns/legacy_m mhead2105" : new Transform(oneToOne, "http://ns.hearst.com/descriptive/en/1.0/ Title"),
+	// end add -mike
+	"http://hearst.com/ns/legacy_m zone" : [new Transform(zone, "http://ns.hearst.com/descriptive/en/1.0/ Cover_Display_Date"),
 		new Transform(zoneIssue, "http://ns.hearst.com/descriptive/en/1.0/ Issue_Name"),
 		new Transform(zoneOrigin, "http://ns.hearst.com/administrative/en/1.0/ Origin"),
 		new Transform(zoneCE, "http://ns.hearst.com/administrative/en/1.0/ Corporate_Entity")]};
@@ -68,19 +85,14 @@ function transformBoolean(theData)
 	return 'false';
 }
 
-function section(theData)
+function oneToOne(theData)
 {
 	return theData;
 }
 
-function pageRange(theData)
+function noDate(theData)
 {
-	return theData;
-}
-
-function assetUse(theData)
-{
-	return theData;
+	return "1900-01-01";
 }
 
 /**
@@ -94,7 +106,7 @@ var myKeywordColumns = ["http://hearst.com/ns/legacy_m ckey1",
 	"http://hearst.com/ns/legacy_m ckey7",
 	"http://hearst.com/ns/legacy_m ckey8"];
 /**
- * Concatenate values by comma separatation (to search per usual in a multivalue field)
+ * Concatenate values by comma separation (to search per usual in a multi-value field)
  *
  * @param theData the single value from our cell
  * @param theOverallRow the full row of data
@@ -103,11 +115,12 @@ function keywords(theData, theOverallRow, theColumns)
 {
 	var aReturn = "";
 	var aSeparatorCharacter = "";
-	if(theData != null)
-	{
-		aReturn += theData;
-		aSeparatorCharacter = ",";
-	}
+//	 Remove. The original data was rowguid, and we don't really want that. -mike
+//	if(theData != null)
+//	{
+//		aReturn += theData;
+//		aSeparatorCharacter = ",";
+//	}
 	for(var ai in myKeywordColumns)
 	{
 		var aValue = theOverallRow[indexOf(theColumns, myKeywordColumns[ai])];
